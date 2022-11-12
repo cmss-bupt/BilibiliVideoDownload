@@ -78,7 +78,12 @@ const open = async (data: VideoData) => {
   //   selected.value.push(videoInfo.value.page[0].page)
   // }
 
-  const quality = data.qualityOptions[0].value
+  let quality = data.qualityOptions[0].value
+  for (let i = 0; i < data.qualityOptions.length; i++) {
+    if (data.qualityOptions[i].label.includes('720')) {
+      quality = data.qualityOptions[i].value
+    }
+  }
   const videoInfo = data
   const selected: number[] = []
   // 默认全选中
