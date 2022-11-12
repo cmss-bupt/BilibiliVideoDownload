@@ -1,16 +1,7 @@
 <template>
-  <a-modal
-    wrapClassName="custom-modal-padding"
-    :visible="visible"
-    :confirmLoading="confirmLoading"
-    :okButtonProps="{ disabled: !(quality !== -1 && selected.length !== 0) }"
-    :closable="false"
-    :maskClosable="false"
-    title="当前视频信息"
-    okText="下载"
-    cancelText="取消"
-    @cancel="cancel"
-    @ok="handleDownload">
+  <a-modal wrapClassName="custom-modal-padding" :visible="visible" :confirmLoading="confirmLoading"
+    :okButtonProps="{ disabled: !(quality !== -1 && selected.length !== 0) }" :closable="false" :maskClosable="false"
+    title="当前视频信息" okText="下载" cancelText="取消" @cancel="cancel" @ok="handleDownload">
     <div class="video-modal custom-scroll-bar">
       <div class="video-info fr">
         <div class="image">
@@ -18,14 +9,16 @@
         </div>
         <div class="content fc jsa pl16">
           <div class="text-active ellipsis-2" @click="openBrowser(videoInfo.url)">{{ videoInfo.title }}</div>
-          <div class="ellipsis-1">up：<span v-for="(item, index) in videoInfo.up" :key="index" class="text-active mr8" @click="openBrowser(`https://space.bilibili.com/${item.mid}`)">{{item.name}}</span></div>
+          <div class="ellipsis-1">up：<span v-for="(item, index) in videoInfo.up" :key="index" class="text-active mr8"
+              @click="openBrowser(`https://space.bilibili.com/${item.mid}`)">{{ item.name }}</span></div>
         </div>
       </div>
       <div class="mt16">
         选择清晰度：
         <div class="mt8">
           <a-radio-group v-model:value="quality">
-            <a-radio class="custom-radio" v-for="(item, index) in videoInfo.qualityOptions" :key="index" :value="item.value">
+            <a-radio class="custom-radio" v-for="(item, index) in videoInfo.qualityOptions" :key="index"
+              :value="item.value">
               {{ item.label }}
             </a-radio>
           </a-radio-group>
@@ -40,7 +33,8 @@
         </div>
       </div>
       <div v-if="videoInfo.page && videoInfo.page.length > 1" class="fr ac warp mt16">
-        <div v-for="(item, index) in videoInfo.page" :key="index" :class="['video-item', selected.includes(item.page) ? 'active' : '']" @click="toggle(item.page)">
+        <div v-for="(item, index) in videoInfo.page" :key="index"
+          :class="['video-item', selected.includes(item.page) ? 'active' : '']" @click="toggle(item.page)">
           <a-tooltip>
             <template #title>
               {{ item.title }}
@@ -103,15 +97,23 @@ const handleDownload = async () => {
   router.push({ name: 'download' })
 }
 
-const open = (data: VideoData) => {
-  const quality = userQuality[store.baseStore().loginStatus]
-  data.qualityOptions.filter((item: any) => quality.includes(item.value))
+const open = async (data: VideoData) => {
+  const qualities = userQuality[store.baseStore().loginStatus]
+  data.qualityOptions.filter((item: any) => qualities.includes(item.value))
+  quality.value = data.qualityOptions[0].value
   videoInfo.value = data
-  visible.value = true
+  // visible.value = true
   // 如果是单p，则默认选中
-  if (videoInfo.value.page.length === 1) {
-    selected.value.push(videoInfo.value.page[0].page)
-  }
+  // if (videoInfo.value.page.length === 1) {
+  //   selected.value.push(videoInfo.value.page[0].page)
+  // }
+
+  // 默认全选中
+  videoInfo.value.page.forEach(element => {
+    selected.value.push(element.page)
+  })
+
+  await handleDownload()
 }
 
 const onAllSelectedChange = (e: any) => {
@@ -144,17 +146,20 @@ defineExpose({
 </script>
 
 <style scoped lang="less">
-.video-modal{
+.video-modal {
   height: 260px;
   overflow-y: overlay;
-  .video-info{
+
+  .video-info {
     height: 71.25px;
-    .image{
+
+    .image {
       flex: none;
       width: 114px;
       overflow: hidden;
       position: relative;
-      img{
+
+      img {
         display: block;
         width: 100%;
         position: absolute;
@@ -163,13 +168,15 @@ defineExpose({
         transform: translate(-50%, -50%);
       }
     }
-    .content{
+
+    .content {
       box-sizing: border-box;
       flex: none;
       width: 358px;
     }
   }
-  .video-item{
+
+  .video-item {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -183,14 +190,16 @@ defineExpose({
     cursor: pointer;
     overflow: hidden;
     user-select: none;
-    &.active{
+
+    &.active {
       color: #ffffff;
       background: @primary-color;
       border: 1px solid @primary-color;
     }
   }
 }
-.custom-radio{
+
+.custom-radio {
   width: 130px;
 }
 </style>

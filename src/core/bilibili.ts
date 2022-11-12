@@ -328,6 +328,7 @@ const getDownloadUrl = async (cid: number, bvid: string, quality: number) => {
     },
     responseType: 'json'
   }
+
   const { body: { data: { dash } }, headers: { 'set-cookie': responseCookies } } = await window.electron.got(
     `https://api.bilibili.com/x/player/playurl?cid=${cid}&bvid=${bvid}&qn=${quality}&type=&otype=json&fourk=1&fnver=0&fnval=80&session=68191c1dc3c75042c6f35fba895d65b0`,
     config
