@@ -80,7 +80,7 @@ const open = async (data: VideoData) => {
 
   let quality = data.qualityOptions[0].value
   for (let i = 0; i < data.qualityOptions.length; i++) {
-    if (data.qualityOptions[i].label.includes('720')) {
+    if (data.qualityOptions[i].label.includes('480')) {
       quality = data.qualityOptions[i].value
     }
   }
